@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cv="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.CarouselView"
+             xmlns:local="clr-namespace:FernandesBartender;assembly=FernandesBartender"
+             x:Class="FernandesBartender.Album"
+             Title="Album do Sucesso" BackgroundColor="Black">
+
+    <cv:CarouselView ItemsSource="{Binding PhotoList}">
+        <cv:CarouselView.Behaviors>
+            <local:CarouselViewBehavior Command="{Binding CurrentPhotoChangedCommand}"/>
+        </cv:CarouselView.Behaviors>
+
+        <cv:CarouselView.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Image Aspect="AspectFit" Source="{Binding .}"/>
+                </Grid>
+            </DataTemplate>
+        </cv:CarouselView.ItemTemplate>
+    </cv:CarouselView>
+
+
+</ContentPage>
