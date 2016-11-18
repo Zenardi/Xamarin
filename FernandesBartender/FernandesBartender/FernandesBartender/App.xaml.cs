@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 
 //[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
+
 namespace FernandesBartender
 {
     public partial class App : Application

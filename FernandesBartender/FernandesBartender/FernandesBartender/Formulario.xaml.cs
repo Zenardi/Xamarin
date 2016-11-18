@@ -1,10 +1,12 @@
-﻿
-using Android.Content;
+﻿using Plugin.Messaging;
 using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace FernandesBartender
 {
+
     public partial class Formulario : ContentPage
     {
         public Formulario()
@@ -26,20 +28,11 @@ namespace FernandesBartender
 
         private void btnSend_Clicked(object sender, EventArgs e)
         {
-            //TODO validar campos
-            //TODO verificar se aparecelho tem conexao com internet
-
-            SendEmail();
-
-           /* if (IsValidFields())
+            if (IsValidFields())
             {
+                //DisplayAlert("Aviso", "Selecione uma ferramenta de e-mail instalada neste dispositivo e apenas clique em enviar.", "OK");
                 SendEmail();
-                DisplayAlert("Envio de Formulario", "Solicitação de Bartender Enviada. Aguarde e Entraremos em Contato!", "OK");
             }
-            else
-            {
-                DisplayAlert("Erros no formulario", "Preencha os campos adequadamente", "OK");
-            }*/
 
         }
 
@@ -49,26 +42,54 @@ namespace FernandesBartender
         /// </summary>
         private void SendEmail()
         {
-            var email = new Intent(Android.Content.Intent.ActionSend);
-            email.PutExtra(Android.Content.Intent.ExtraEmail, new string[] { "person1@xamarin.com", "person2@xamrin.com" });
+            var emailTask = MessagingPlugin.EmailMessenger;
+            
+            try
+            {
+                if (emailTask.CanSendEmail)
+                {
+                    emailTask.SendEmail("du.zenardi@gmail.com", "Novo Cliente - " + entryName.Text, "--------\n" + generateEmailBody(entryName.Text, entryEmail.Text, entryPhone.Text, entryMsg.Text, datepicker.Date.ToString("dd/MM/yyyy"), entryLocalEvento.Text));
+                    DisplayAlert("Envio de Formulario - Instrução", "Ao selecionar seu aplicativo padrão de e-mail, apenas clique em enviar e entraremos em contato. Obrigado!", "OK");
+                }
+                else
+                    DisplayAlert("Falha ao Enviar", "Falha ao enviar Email", "OK");
+            }
+            catch(Exception ex)
+            {
+                DisplayAlert("Erro", "Erro " + ex.Message, "OK");
+            }
 
-            email.PutExtra(Android.Content.Intent.ExtraCc,
-            new string[] { "person3@xamarin.com" });
-
-            email.PutExtra(Android.Content.Intent.ExtraSubject, "Hello Email");
-
-            email.PutExtra(Android.Content.Intent.ExtraText,
-            "Hello from Xamarin.Android");
-
-            email.SetType("message/rfc822");
-            //StartActivity(email);
-            Context.StartActivity(Android.Content.Intent)
         }
 
-        /*private bool IsValidFields()
+        private bool IsValidFields()
         {
-            throw new NotImplementedException();
-        }*/
+            if (entryName.Text == "" || entryPhone.Text == "" || entryEmail.Text == "" || entryLocalEvento.Text == "")
+            {
+                DisplayAlert("Erros no Formulário", "Todos os campos são obrigatorios!", "OK");
+                return false;
+            }
+            if (!IsValidEmail(entryEmail.Text))
+            {
+                DisplayAlert("Erros no Formulário", "Email Invalido!", "OK");
+                return false;
+            }
+
+            if(datepicker.Date <= DateTime.Today)
+            {
+                DisplayAlert("Erros no Formulário", "Data Invalida. Data selecionada precisa ser maior que a data de hoje!", "OK");
+                return false;
+            }
+            return true;
+        }
+
+        private bool IsValidEmail(string emailString)
+        {
+            if (emailString == "" || emailString == null) return false;
+
+            return Regex.IsMatch(emailString, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
+        }
+
+
 
         private void btnSiteOficial_Clicked(object sender, EventArgs e)
         {
@@ -77,9 +98,9 @@ namespace FernandesBartender
 
         private String generateEmailBody(String nome, String email, String telefone, String mensagem, String dataEvento, String localEvento)
         {
-            String body = "Olá Fernando, <br/> <t>Nova solicitação de orçamento de " + nome + ".<br/><br/><t>" +
-                    "Email do cliente: " + email + "<br/><t> Telefone de contato: " + telefone + "<br><t> Mensagem: " + mensagem + "<br><t>" +
-                    "Data do Evento: " + dataEvento + "<br><t>" + "Local Evento: " + localEvento;
+            String body = "Nova solicitação de orçamento de " + nome + ".\n\n" +
+                    "Email: " + email + "\nContato: " + telefone + "\nMensagem: " + mensagem + "\n" +
+                    "Data do Evento: " + dataEvento + "\n" + "Local Evento: " + localEvento;
 
             return body;
         }
