@@ -48,7 +48,7 @@ namespace FernandesBartender
             {
                 if (emailTask.CanSendEmail)
                 {
-                    emailTask.SendEmail("du.zenardi@gmail.com", "Novo Cliente - " + entryName.Text, "--------\n" + generateEmailBody(entryName.Text, entryEmail.Text, entryPhone.Text, entryMsg.Text, datepicker.Date.ToString("dd/MM/yyyy"), entryLocalEvento.Text));
+                    emailTask.SendEmail("fernandesbartender@yahoo.com.br", "Novo Cliente - " + entryName.Text, "--------\n" + generateEmailBody(entryName.Text, entryEmail.Text, entryPhone.Text, entryMsg.Text, datepicker.Date.ToString("dd/MM/yyyy"), entryLocalEvento.Text));
                     DisplayAlert("Envio de Formulario - Instrução", "Ao selecionar seu aplicativo padrão de e-mail, apenas clique em enviar e entraremos em contato. Obrigado!", "OK");
                 }
                 else
